@@ -1,4 +1,4 @@
-FROM njreg.jpushoa.com/base/centos:7
+FROM reg.domains.com/base/centos:7
 COPY namedmanager-bind-1.9.0-2.el7.centos.noarch.rpm bjdz-named-change.sh namedmanager-bind run.sh namedmanager_logpush localtime /tmp/
 RUN yum install -y dnsmasq bind cronie /tmp/namedmanager-bind-1.9.0-2.el7.centos.noarch.rpm \
     && yum clean all \
