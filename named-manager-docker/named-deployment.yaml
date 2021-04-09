@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: namedmanager-deployment
+  namespace: bind
+spec:
+  selector:
+    matchLabels:
+      app: namedmanager
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: namedmanager
+    spec:
+      containers:
+      - name: namedmanager
+        image: njreg.jpushoa.com/sa/dnssrv:20210409
+        volumeMounts:
+          - name: named-config
+            mountPath: /etc/named.conf
+            subPath: named.conf
+          - name: namedmanager-config
+            mountPath: /etc/namedmanager/config-bind.php
+            subPath: config-bind.php
+          - name: dnsmasq-config
+            mountPath: /etc/dnsmasq.conf
+            subPath: dnsmasq.conf
+      volumes:
+      - name: named-config
+        configMap:
+          defaultMode: 420
+          name: named-20210407
+      - name: namedmanager-config
+        configMap:
+          defaultMode: 384
+          name: namedmanager-20210407
+      - name: dnsmasq-config
+        configMap:
+          defaultMode: 384
+          name: dnsmasq-20210407
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: named-service-20210407
+  namespace: bind
+spec:
+  selector:
+    app: namedmanager
+  ports:
+  - protocol: UDP
+    port: 53
+    targetPort: 53
