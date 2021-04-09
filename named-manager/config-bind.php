@@ -1,7 +1,7 @@
 <?php
 
 // API Configuration
-$config["api_url"]              = "https://dns.jpush.com:19143/namedmanager";      // Application Install Location
+$config["api_url"]              = "https://dns.domains.com:19143/namedmanager";      // Application Install Location
 $config["api_server_name"]      = "dnss01.jpushoa.com";
 $config["api_auth_key"]         = "slavesecretkey";                                    // API authentication key
 // Log file to find messages from Named.
