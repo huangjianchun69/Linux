@@ -1,6 +1,91 @@
-1. Q: 什么命令可以用来观察某个进程的内存使用情况：
-   A: （1）、top：g -> 3 可以查看进程的内存使用情况；
-      （2）、pmap：可以查看指定进程，它最终解析的是/proc/pid/smaps 和 maps 文件内容
-      （3）、/proc/vmstat: 只能显示整个系统的内存使用情况。
-2. 
+7. 在系统内存紧张时申请内存，可能会触发下面行为：
+   -  内存回收
+   -  OOM
+   -  内存申请失败
+   -  内存申请成功后，会修改进程的地址空间
+
+8. page cache 包含哪些项？
+   -  Buffers（设备cache，比如磁盘）
+   -  Cached（普通文件cache）
+   -  SwapCached（swap cache）
+   -  Shmem（共享内存）
+
+9. 哪种I/O 会使用到page cache？
+   -  Buffered I/O
+   -  Memory-Mapped I/O
+   -  直接 I/O 和 AIO 异步io 会绕过page cache
+
+10. 哪些方式可以用来观察内存回收？
+   -  sar 命令
+   -  /proc/vmstat
+   -  /sys/kernel/debug/tracing/events/vmscan/ 下面的 tracepoints 可以用来观察单次回收行为的细节；
+
+11. 哪些系统调用会更改进程的虚拟地址空间？
+   -  mmap(2) 会修改进程的memory mapping region 地址
+   -  munmap(2) 会修改进程的memory mapping region 地址
+   -  brk(2) 会修改进程的堆地址
+
+1. 什么命令可以用来观察某个进程的内存使用情况：
+    - （1）、top：g -> 3 可以查看进程的内存使用情况；
+    - （2）、pmap：可以查看指定进程，它最终解析的是/proc/pid/smaps 和 maps 文件内容
+    - （3）、/proc/vmstat：只能显示整个系统的内存使用情况。
+
+2.  系统free内存不足，top 查看所有进程加起来的内存使用也不多，那么是什么在使用内存呢？
+    -  内核内存slab
+    -  进程在tmpfs 中新建文件，并向该文件写入了很多内容，然后关闭了这些文件。
+    -  内核模块内存泄漏。
+    -  如果是进程内存泄漏，会显示在RES 中，top 命令可以直接看到。
+
+3. 在内存紧张时，如果要防止进程使用的page cache 被回收，应该怎么做？
+   -  使用mlock(2) 来锁定这些page cache
+   -  使用memory cgroup 来保护这些page cache
+
+4. 在脏页回写时，哪些命令可以观察到这个行为？
+   -  /proc/vmstat
+   -  sar
+   -  iostat
+   -  iotop
+
+5. TCP 三次握手的大概流程：
+   -  client 调用connect(2) 后触发三次握手，三次握手完成后connect(2)返回.
+   -  假如server不存在，client 发syn 包后收不到响应会继续重传，重传次数由tcp_syn_retries 来控制。
+   -  tcpdump 可以抓包观察到三次握手。
+
+6. TCP 四次挥手的大概流程：
+   -  进程调用close socket fd 会触发四次挥手。
+   -  主动关闭tcp的一方，tcp连接会一次进入以下状态：fin_wait1、fin_wait2、time_wait
+   -  被动关闭的一方 ，tcp连接会一次进入以下状态：close_wait、last_ack
+   -  tcpdump 可以抓包观察四次挥手。
+
+12. 哪些方式可以用来调整tcp 连接缓冲区的大小？
+   -  应用程式调用setsockopt(2)来设置缓冲区大小
+   -  修改sysctl 配置项来设置tcp 缓冲区大小
+   -  通过eBPF 来设置tcp 缓冲区大小
+
+13. 哪些情况会引起tcp 重传？
+   -  tcp 数据包在传输过程中被丢弃掉
+   -  长时间收不到对端的确认包
+   -  对端确认包在传输过程中被丢弃掉
+   -  默认在收到3个相同的ACK 后就会触发快速重传
+
+14. ping 延迟抖动可能是什么原因引起的？
+   -  传输过程中的交换机、路由器的拥塞
+   -  ping 包由软中断处理，在对端的收包软中断没有被及时处理，就会交给ksoftirqd来处理，二ksoftirqd 为普通进程，所以会导致延迟抖动。
+   -  对端有优先级更高的实时进程一直在占用CPU
+
+15. tcp 重传可以通过什么方式来观察？
+   -  tcp tracepoints
+   -  tcpdump
+   -  通过eBPF 来实现一个跟踪工具
+   -  借助 kprobe 实现内核模块来追踪
+
+16. 下面哪些行为可能引起CPU利用率高？
+   -  CPU 执行内核函数时间太长
+   -  中断太多，CPU 处理软中断的时间太长
+   -  I/O 太慢，处于Iowait 状态的线程太多
+   -  CPU 执行用户线程时间太长
+
+17. Transparent HugePages（THP，透明大页 ）为什么可以提升应用程序的性能？
+   -  页变大，减少应用运行需要的页数，可以减少缺页异常的发生。
+   -  进程运行需要的页表项减少
    
