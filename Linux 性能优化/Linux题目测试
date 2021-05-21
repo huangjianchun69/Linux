@@ -1,57 +1,57 @@
-7. 在系统内存紧张时申请内存，可能会触发下面行为：
+1. 在系统内存紧张时申请内存，可能会触发下面行为：
    -  内存回收
    -  OOM
    -  内存申请失败
    -  内存申请成功后，会修改进程的地址空间
 
-8. page cache 包含哪些项？
+2. page cache 包含哪些项？
    -  Buffers（设备cache，比如磁盘）
    -  Cached（普通文件cache）
    -  SwapCached（swap cache）
    -  Shmem（共享内存）
 
-9. 哪种I/O 会使用到page cache？
+3. 哪种I/O 会使用到page cache？
    -  Buffered I/O
    -  Memory-Mapped I/O
    -  直接 I/O 和 AIO 异步io 会绕过page cache
 
-10. 哪些方式可以用来观察内存回收？
+4. 哪些方式可以用来观察内存回收？
    -  sar 命令
    -  /proc/vmstat
    -  /sys/kernel/debug/tracing/events/vmscan/ 下面的 tracepoints 可以用来观察单次回收行为的细节；
 
-11. 哪些系统调用会更改进程的虚拟地址空间？
+5. 哪些系统调用会更改进程的虚拟地址空间？
    -  mmap(2) 会修改进程的memory mapping region 地址
    -  munmap(2) 会修改进程的memory mapping region 地址
    -  brk(2) 会修改进程的堆地址
 
-1. 什么命令可以用来观察某个进程的内存使用情况：
+6. 什么命令可以用来观察某个进程的内存使用情况：
     - （1）、top：g -> 3 可以查看进程的内存使用情况；
     - （2）、pmap：可以查看指定进程，它最终解析的是/proc/pid/smaps 和 maps 文件内容
     - （3）、/proc/vmstat：只能显示整个系统的内存使用情况。
 
-2.  系统free内存不足，top 查看所有进程加起来的内存使用也不多，那么是什么在使用内存呢？
+7.  系统free内存不足，top 查看所有进程加起来的内存使用也不多，那么是什么在使用内存呢？
     -  内核内存slab
     -  进程在tmpfs 中新建文件，并向该文件写入了很多内容，然后关闭了这些文件。
     -  内核模块内存泄漏。
     -  如果是进程内存泄漏，会显示在RES 中，top 命令可以直接看到。
 
-3. 在内存紧张时，如果要防止进程使用的page cache 被回收，应该怎么做？
+8. 在内存紧张时，如果要防止进程使用的page cache 被回收，应该怎么做？
    -  使用mlock(2) 来锁定这些page cache
    -  使用memory cgroup 来保护这些page cache
 
-4. 在脏页回写时，哪些命令可以观察到这个行为？
+9. 在脏页回写时，哪些命令可以观察到这个行为？
    -  /proc/vmstat
    -  sar
    -  iostat
    -  iotop
 
-5. TCP 三次握手的大概流程：
+10. TCP 三次握手的大概流程：
    -  client 调用connect(2) 后触发三次握手，三次握手完成后connect(2)返回.
    -  假如server不存在，client 发syn 包后收不到响应会继续重传，重传次数由tcp_syn_retries 来控制。
    -  tcpdump 可以抓包观察到三次握手。
 
-6. TCP 四次挥手的大概流程：
+11. TCP 四次挥手的大概流程：
    -  进程调用close socket fd 会触发四次挥手。
    -  主动关闭tcp的一方，tcp连接会一次进入以下状态：fin_wait1、fin_wait2、time_wait
    -  被动关闭的一方 ，tcp连接会一次进入以下状态：close_wait、last_ack
