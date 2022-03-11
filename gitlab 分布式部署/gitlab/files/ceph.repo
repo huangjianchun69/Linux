@@ -1,0 +1,26 @@
+[ceph]
+name=Ceph packages
+baseurl=http://mirrors.163.com/ceph/rpm-jewel/el7/x86_64/
+enabled=1
+gpgcheck=1
+priority=2
+type=rpm-md
+gpgkey=http://mirrors.163.com/ceph/keys/release.asc
+
+[ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://mirrors.163.com/ceph/rpm-jewel/el7/noarch/
+enabled=1
+gpgcheck=1
+priority=2
+type=rpm-md
+gpgkey=http://mirrors.163.com/ceph/keys/release.asc
+
+[ceph-source]
+name=Ceph source packages
+baseurl=http://mirrors.163.com/ceph/rpm-jewel/el7/SRPMS/
+enabled=0
+gpgcheck=1
+priority=2
+type=rpm-md
+gpgkey=http://mirrors.163.com/ceph/keys/release.asc

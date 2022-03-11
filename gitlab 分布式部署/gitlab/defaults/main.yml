@@ -1,0 +1,53 @@
+---
+# General config
+gitlab_external_url: 'https://hjc-gitlab.jpushoa.com'
+#gitlab_ssh_host: 'ssh-gitlab.jpushoa.com'
+gitlab_ssh_host: 'hjc-gitlab.jpushoa.com'
+gitlab_ssh_port: 10022
+gitlab_time_zone: "Asia/Shanghai"
+
+gitlab_web_server_uid: 9000
+gitlab_web_server_gid: 9000
+gitlab_user_uid: 9001
+gitlab_user_gid: 9001
+
+# Postgresql Server
+gitlab_postgresql_listen_address: '0.0.0.0'
+gitlab_postgresql_port: 5432
+gitlab_postgresql_md5_auth_cidr_addresses: '%w()'
+gitlab_postgresql_trust_auth_cidr_addresses: '%w(172.16.0.0/12 127.0.0.0/24)'
+gitlab_postgresql_sql_user: "gitlab"
+gitlab_postgresql_sql_user_password: "jiguang.cn"
+
+# Postgresql client
+gitlab_postgresql_enable: "{{ (groups['all'].index(inventory_hostname) == 0) | ternary('true','false') }}"
+gitlab_db_host: '127.0.0.1'
+gitlab_db_port: 6432
+gitlab_db_username: "gitlab"
+gitlab_db_password: "{{ gitlab_postgresql_sql_user_password }}"
+
+# Redis Server
+gitlab_redis_enable: "{{ (groups['all'].index(inventory_hostname) == 0) | ternary('true','false') }}"
+gitlab_redis_bind: '0.0.0.0' 
+gitlab_redis_server_port: 6379
+gitlab_redis_password: gitlab2019
+
+# Redis client
+gitlab_redis_host: "{{groups['database'][0]}}"
+gitlab_redis_port: 6379
+
+# Glusterfs mount point
+#gitlab_mountpoint: "/gitlab-gluster"
+#gitlab_git_data_dirs: "{{ gitlab_mountpoint }}/git-data"
+#gitlab_shared_path: "{{ gitlab_mountpoint }}/gitlab-rails/shared"
+#gitlab_uploads_directory: "{{ gitlab_mountpoint }}/gitlab-rails/uploads"
+#gitlab_builds_directory: "{{ gitlab_mountpoint }}/gitlab-ci/builds"
+
+# Consul server
+gitlab_consul_cluster: "{{groups['database'][0]}} {{groups['database'][1]}} {{groups['database'][2]}}"
+
+# SSL Configuration.
+gitlab_redirect_http_to_https: 'true'
+gitlab_ssl_certificate: "/etc/gitlab/ssl/jpushoa.com.pem"
+gitlab_ssl_certificate_key: "/etc/gitlab/ssl/jpushoa.com.key"
+gitlab_redirect_http_to_https_port: 80

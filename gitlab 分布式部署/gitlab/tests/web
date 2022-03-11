@@ -1,0 +1,22 @@
+---
+# General config 
+gitlab_auto_migrate: "false"
+gitlab_manage_storage_directories: "{{ (groups['web'].index(inventory_hostname) == 0) | ternary('true','false') }}"
+
+# Postgresql Server
+#gitlab_postgresql_enable: "false"
+
+# Redis Server
+#gitlab_redis_enable: "false"
+
+# Roles
+gitlab_roles: '["pgbouncer_role", "application_role", "consul_role"]'
+
+# repmgr                                                                                                                                          
+gitlab_repmgr_initial: 'false'
+
+gitlab_mountpoint: "/gitlab-ceph"
+gitlab_git_data_dirs: "{{ gitlab_mountpoint }}/git-data"
+gitlab_shared_path: "{{ gitlab_mountpoint }}/gitlab-rails/shared"
+gitlab_uploads_directory: "{{ gitlab_mountpoint }}/gitlab-rails/uploads"
+gitlab_builds_directory: "{{ gitlab_mountpoint }}/gitlab-ci/builds"

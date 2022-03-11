@@ -1,0 +1,71 @@
+---
+- name : install gitlab-ee https://mirrors.tuna.tsinghua.edu.cn/gitlab-ee/yum/el7/
+  yum:
+    name: http://dsoft.jpushoa.com:8888/repo/gitlab/gitlab-ee-11.8.1-ee.0.el7.x86_64.rpm
+    state: present
+
+
+- name : gitlab configuration file
+  template:
+    src: gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+    owner: root
+    group: root
+    mode: 0600
+
+#- name : copy gitlab-secrets.json file
+#  copy: 
+#    src: 'gitlab-secrets.json'
+#    dest: '/etc/gitlab/gitlab-secrets.json'
+#    owner: root
+#    group: root
+#    mode: 0600
+- name: Creates directory
+  file: path={{ item.dir }} state=directory
+  with_items:
+    - { dir: '/etc/gitlab/ssl' }
+
+- name: copy gitlab files
+  copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0600
+  with_items:
+    - { src: 'gitlab-secrets.json', dest: '/etc/gitlab/gitlab-secrets.json' }
+    - { src: 'ssl/jpushoa.com.key', dest: '/etc/gitlab/ssl/jpushoa.com.key' }
+    - { src: 'ssl/jpushoa.com.pem', dest: '/etc/gitlab/ssl/jpushoa.com.pem' }
+    - { src: 'adminkey', dest: '/etc/gitlab/adminkey' }
+#  notify: reconfigure gitlab
+
+- name: nginx upstream health http port
+  blockinfile: 
+    path: /opt/gitlab/embedded/cookbooks/gitlab/templates/default/nginx-gitlab-http.conf.erb
+    insertafter: "return 301 https"
+    block: |
+          }
+    
+          location /-/readiness {
+            proxy_cache off;
+            proxy_pass  http://gitlab-workhorse;
+
+- name: gitlab share data mount
+  block:
+    - lineinfile:
+        path: /etc/fstab
+        #line: "172.19.48.11:gitlab-app /gitlab-gluster glusterfs backup-volfile-servers=172.19.48.12:172.19.48.13:172.19.48.14:172.19.48.15:172.19.48.16:172.19.48.17:172.19.48.18,gid-timeout=10,use-readdirp=no,log-level=WARNING,log-file=/var/log/gluster.log 0 0"
+        #line: "172.19.132.137:/data /gitlab-ceph nfs4 defaults,soft,rsize=1048576,wsize=1048576,noatime,nofail,lookupcache=positive 0 2"
+        line: "172.19.32.101:6789:/ {{ gitlab_mountpoint }} ceph name=admin,secret=AQBhcURaEv43KBAAkdVlaPafjmk78igOirUO4g==,defaults,rsize=1048576,wsize=1048576,noatime"
+#    - yum:
+#        name: [glusterfs-fuse, nfs-utils]
+#        state: installed
+#    - command: mountpoint -q /gitlab
+#      register: mount_stat
+#      ignore_errors: yes
+    - command: mountpoint -q "{{ gitlab_mountpoint }}"
+      register: mount_stat_ceph
+      ignore_errors: yes
+    - file:
+        name: "{{ gitlab_mountpoint }}"
+        state: directory
+    - command: mount  "{{ gitlab_mountpoint }}"
+      when: mount_stat_ceph.rc != 0
+
+  when:
+    - gitlab_mountpoint is defined

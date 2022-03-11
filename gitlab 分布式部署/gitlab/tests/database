@@ -1,0 +1,20 @@
+---
+# General config 
+gitlab_auto_migrate: "{{ (groups['database'].index(inventory_hostname) == 0) | ternary('true','false') }}"
+gitlab_manage_storage_directories: 'true'
+
+# Postgresql Server
+gitlab_postgresql_enable: 'true'
+gitlab_postgresql_trust_auth_cidr_addresses: '%w(172.17.8.51/24 127.0.0.0/24)'
+
+# Redis Server
+gitlab_redis_enable: 'true'
+
+# Roles
+#gitlab_roles: '["application_role", "redis_master_role", "postgres_role", "pgbouncer_role", "consul_role", "geo_primary_role"]'
+list1: '["postgres_role", "consul_role", "redis_sentinel_role", "redis_master_role"]'
+list2: '["postgres_role", "consul_role", "redis_sentinel_role", "redis_slave_role"]'
+gitlab_roles: "{{ (groups['database'].index(inventory_hostname) == 0) | ternary(list1, list2) }}"
+
+# repmgr
+gitlab_repmgr_initial: "{{ (groups['database'].index(inventory_hostname) == 0) | ternary('true','false') }}"

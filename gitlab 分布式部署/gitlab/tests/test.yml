@@ -1,0 +1,11 @@
+---
+- hosts: all
+  remote_user: huangjc
+  become: yes
+  roles:
+    - gitlab
+
+  vars:
+    gitlab_ssh_host: 'hjc-gitlab.jpushoa.com'
+    gitlab_ssh_port: 10022
+    gitlab_postgresql_trust_auth_cidr_addresses: '%w(172.16.0.0/12 127.0.0.0/24)'
