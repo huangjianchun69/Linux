@@ -1,7 +1,7 @@
 TCP 重传指标是通过解析 /proc/net/snmp 这个文件计算出来的：  
 **可以使用 sar -n ETCP 1 命令显示：**
+<img width="996" alt="图片" src="https://user-images.githubusercontent.com/20528768/157797401-02ed789b-1528-4098-abc6-010591dfa340.png">
 
-![image](https://note.youdao.com/yws/api/group/61831231/noteresource/BF5F7F79000643C9A10EC343422348D4/version/2029?method=get-resource&shareToken=C2ED6B1454904F16A6BA32B67310CE09&entryId=432907966)
 
 ```
 重传查看：  
