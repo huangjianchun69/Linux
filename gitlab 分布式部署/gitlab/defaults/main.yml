@@ -1,8 +1,8 @@
 ---
 # General config
-gitlab_external_url: 'https://hjc-gitlab.jpushoa.com'
-#gitlab_ssh_host: 'ssh-gitlab.jpushoa.com'
-gitlab_ssh_host: 'hjc-gitlab.jpushoa.com'
+gitlab_external_url: 'https://hjc-gitlab.domain.com'
+#gitlab_ssh_host: 'ssh-gitlab.domain.com'
+gitlab_ssh_host: 'hjc-gitlab.domain.com'
 gitlab_ssh_port: 10022
 gitlab_time_zone: "Asia/Shanghai"
 
