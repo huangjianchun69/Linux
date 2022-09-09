@@ -5,7 +5,7 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
     host: '0.0.0.0'
     port: 389
     uid: 'uid'
-    bind_dn: 'uid=jgdocker,ou=Admins,dc=jpushoa,dc=com'
+    bind_dn: 'uid=jgdocker,ou=Admins,dc=domain,dc=com'
     password: 'xxxxx'
     encryption: 'plain' # "start_tls" or "simple_tls" or "plain"
     verify_certificates: false
@@ -13,13 +13,13 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
     allow_username_or_email_login: true
     lowercase_usernames: false
     block_auto_created_users: false
-    base: 'dc=jpushoa,dc=com'
+    base: 'dc=domain,dc=com'
     user_filter: ''
     email: uid@jiguang.cn
     attributes:
       username: ['uid', 'userid', 'sAMAccountName']
     ## EE only
-    group_base: 'ou=people,dc=jpushoa,dc=com'
+    group_base: 'ou=people,dc=domain,dc=com'
     admin_group: ''
     sync_ssh_keys: false
 EOS
