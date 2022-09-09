@@ -1,7 +1,7 @@
 ---
 - name : install gitlab-ee https://mirrors.tuna.tsinghua.edu.cn/gitlab-ee/yum/el7/
   yum:
-    name: http://dsoft.jpushoa.com:8888/repo/gitlab/gitlab-ee-11.8.1-ee.0.el7.x86_64.rpm
+    name: http://dsoft.domain.com:8888/repo/gitlab/gitlab-ee-11.8.1-ee.0.el7.x86_64.rpm
     state: present
 
 
@@ -29,8 +29,8 @@
   copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0600
   with_items:
     - { src: 'gitlab-secrets.json', dest: '/etc/gitlab/gitlab-secrets.json' }
-    - { src: 'ssl/jpushoa.com.key', dest: '/etc/gitlab/ssl/jpushoa.com.key' }
-    - { src: 'ssl/jpushoa.com.pem', dest: '/etc/gitlab/ssl/jpushoa.com.pem' }
+    - { src: 'ssl/domain.com.key', dest: '/etc/gitlab/ssl/domain.com.key' }
+    - { src: 'ssl/domain.com.pem', dest: '/etc/gitlab/ssl/domain.com.pem' }
     - { src: 'adminkey', dest: '/etc/gitlab/adminkey' }
 #  notify: reconfigure gitlab
 
