@@ -48,6 +48,6 @@ gitlab_consul_cluster: "{{groups['database'][0]}} {{groups['database'][1]}} {{gr
 
 # SSL Configuration.
 gitlab_redirect_http_to_https: 'true'
-gitlab_ssl_certificate: "/etc/gitlab/ssl/jpushoa.com.pem"
-gitlab_ssl_certificate_key: "/etc/gitlab/ssl/jpushoa.com.key"
+gitlab_ssl_certificate: "/etc/gitlab/ssl/domain.com.pem"
+gitlab_ssl_certificate_key: "/etc/gitlab/ssl/domain.com.key"
 gitlab_redirect_http_to_https_port: 80
